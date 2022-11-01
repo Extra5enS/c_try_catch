@@ -1,4 +1,5 @@
 #include "try-catch.h"
+#include <stdio.h>
 
 void exception_init(exception_t *pe) {
 	pe -> array = NULL;
@@ -33,15 +34,18 @@ void throw(exception_t* pe, int val) {
 
 int try_catch(exception_t* pe, int* vals, size_t size) {
 	exception_new_point(pe);
+	printf("try_catch: pe -> size = %d\n", pe -> size);
 	int val = setjmp(*exception_top(pe));
 	if(val) {
 		// we try to find this val in list
 		for (int i = 0; i < size; i++) {
-			if(val == *(vals)) {
+			if(val == vals[i]) {
+				printf("I have found val = %d\n", val);
 				return val;
 			}
 		}
 		// we did't find, so we throw it in prev env
+		printf("throw out\n");
 		exception_delete(pe);
 		throw(pe, val);
 	}
